@@ -1,51 +1,646 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#08090d"><meta name="description" content="CINEVA — discover movies and series worth watching.">
-  <title>CINEVA — Movies & Series</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-<body>
-  <div class="ambient"></div>
-  <header class="topbar">
-    <a class="brand" href="index.html"><span class="brand-mark">C</span><span>CINEVA<span class="brand-dot">.</span></span></a>
-    <nav class="main-nav" id="mainNav"><a class="active" href="index.html">Home</a><a href="#latest">Latest</a><a href="#movies">Movies</a><a href="#series">TV Series</a><a href="#discover">Discover</a></nav>
-    <div class="nav-actions"><button class="icon-btn" id="searchToggle" aria-label="Search">⌕</button><a class="profile-btn" href="#profile" aria-label="Profile">H</a><button class="menu-btn" id="menuToggle" aria-label="Open menu">☰</button></div>
-  </header>
 
-  <main>
-    <section class="hero" id="hero">
-      <div class="hero-backdrop" id="heroBackdrop"></div><div class="hero-shade"></div>
-      <div class="hero-content">
-        <div class="eyebrow"><span class="live-dot"></span> YOUR NEXT FAVORITE STARTS HERE</div>
-        <p class="hero-kicker" id="heroKicker">CINEVA ORIGINAL • FEATURED</p>
-        <h1 id="heroTitle">Stories that<br><em>stay with you.</em></h1>
-        <p class="hero-description" id="heroDescription">Discover unforgettable movies, brilliant series and stories worth staying up for.</p>
-        <div class="hero-meta" id="heroMeta"><span> UHD 4K</span><span>•</span><span>Movies & Series</span></div>
-        <div class="hero-buttons"><a class="btn btn-primary" id="heroWatch" href="#latest">▶ &nbsp; Explore now</a><button class="btn btn-glass" id="heroInfo">＋ &nbsp; More info</button></div>
-      </div>
-      <div class="hero-bottom"><div class="hero-progress"><span></span></div><div class="hero-controls"><button id="heroPrev" aria-label="Previous">‹</button><button id="heroNext" aria-label="Next">›</button></div></div>
-      <div class="hero-count" id="heroCount">01 <span>/ 03</span></div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CINEVA | Discover. Watch. Experience.</title>
+
+    <meta name="description" content="Explore the latest movies, TV series, action, horror, drama, comedy and animation on CINEVA.">
+
+    <meta name="theme-color" content="#07090d">
+
+    <link rel="icon" href="assets/icons/favicon.png">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- PAGE LOADER -->
+    <div id="page-loader" class="page-loader">
+        <div class="loader-logo">CINEVA<span>.</span></div>
+        <div class="loader-spinner"></div>
+        <p>Preparing your experience...</p>
+    </div>
+
+
+    <!-- HEADER -->
+    <header class="topbar" id="navbar">
+
+        <!-- LOGO -->
+        <a href="index.html" class="brand">
+            CINEVA<span>.</span>
+        </a>
+
+        <!-- NAVIGATION -->
+        <nav class="main-nav" id="main-nav">
+
+            <a href="index.html" class="active">
+                Home
+            </a>
+
+            <a href="discover.html?type=movie">
+                Movies
+            </a>
+
+            <a href="discover.html?type=series">
+                TV Series
+            </a>
+
+            <a href="discover.html">
+                Discover
+            </a>
+
+            <a href="#latest">
+                Latest
+            </a>
+
+            <a href="#footer">
+                About
+            </a>
+
+        </nav>
+
+        <!-- NAV ACTIONS -->
+        <div class="nav-actions">
+
+            <button class="icon-btn" id="search-toggle" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <a href="my-list.html" class="icon-btn" aria-label="My list">
+                <i class="fa-regular fa-bookmark"></i>
+            </a>
+
+            <a href="profile.html" class="profile-btn" aria-label="Profile">
+                <i class="fa-solid fa-user"></i>
+            </a>
+
+            <button class="menu-btn" id="menu-toggle" aria-label="Open navigation">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- SEARCH PANEL -->
+    <section class="search-panel" id="search-panel">
+
+        <div class="search-container">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <input
+                type="search"
+                id="global-search"
+                placeholder="Search movies, series, actors..."
+                autocomplete="off"
+            >
+
+            <button id="search-close" aria-label="Close search">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+        </div>
+
+        <div id="search-results" class="search-results"></div>
+
     </section>
 
-    <section class="quick-strip"><div><strong>Unlimited stories.</strong><span> One place to discover what you love.</span></div><span class="strip-tag">MADE FOR MOVIE LOVERS</span></section>
-    <section class="content-section" id="latest"><div class="section-heading"><div><p class="section-overline">JUST ARRIVED</p><h2>Latest added <span>✦</span></h2><p class="section-sub">Fresh stories, recently added to CINEVA.</p></div><a href="discover.html?sort=latest" class="see-all">View all <b>→</b></a></div><div class="poster-row" id="latestGrid"><div class="loading-line">Loading the latest titles…</div></div></section>
-    <section class="content-section compact-section" id="trending"><div class="section-heading"><div><p class="section-overline">WHAT EVERYONE IS WATCHING</p><h2>Trending now</h2></div><a href="discover.html?sort=trending" class="see-all">View all <b>→</b></a></div><div class="poster-row" id="trendingGrid"></div></section>
-    <section class="content-section category-section" id="movies"><div class="section-heading"><div><p class="section-overline">EXPLORE BY MOOD</p><h2>Action <span>⚡</span></h2></div><a class="see-all" href="discover.html?category=Action">View all <b>→</b></a></div><div class="poster-row" id="actionGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">DARKNESS HAS A STORY</p><h2>Horror <span>☾</span></h2></div><a class="see-all" href="discover.html?category=Horror">View all <b>→</b></a></div><div class="poster-row" id="horrorGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">LOVE, LIFE & EVERYTHING BETWEEN</p><h2>Drama</h2></div><a class="see-all" href="discover.html?category=Drama">View all <b>→</b></a></div><div class="poster-row" id="dramaGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">SCHOOL DAYS, BIG STORIES</p><h2>Highschool</h2></div><a class="see-all" href="discover.html?category=Highschool">View all <b>→</b></a></div><div class="poster-row" id="highschoolGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">BEYOND IMAGINATION</p><h2>Animation</h2></div><a class="see-all" href="discover.html?category=Animation">View all <b>→</b></a></div><div class="poster-row" id="animationGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">A LITTLE MORE JOY</p><h2>Comedy</h2></div><a class="see-all" href="discover.html?category=Comedy">View all <b>→</b></a></div><div class="poster-row" id="comedyGrid"></div></section>
-    <section class="content-section category-section"><div class="section-heading"><div><p class="section-overline">NEW EPISODES & NEW WORLDS</p><h2>Latest series</h2></div><a class="see-all" href="discover.html?type=series">View all <b>→</b></a></div><div class="poster-row" id="seriesGrid"></div></section>
-    <section class="adult-section"><div><span class="adult-pill">18+ AREA</span><h2>For mature audiences.</h2><p>Explore age-restricted titles in a separate, clearly marked collection.</p></div><a class="btn btn-glass" href="discover.html?category=Erotic" id="adultLink">Enter 18+ collection →</a></section>
-  </main>
-  <footer class="footer"><a class="brand" href="index.html"><span class="brand-mark">C</span><span>CINEVA<span class="brand-dot">.</span></span></a><p>Stories worth watching. Moments worth remembering.</p><div class="footer-links"><a href="#about">About</a><a href="#support">Support</a><a href="#terms">Terms</a><a href="#privacy">Privacy</a></div><small>© <span id="year"></span> CINEVA. All rights reserved.</small></footer>
-  <div class="search-overlay" id="searchOverlay"><div class="search-panel"><button class="close-search" id="closeSearch">✕</button><p class="section-overline">FIND YOUR NEXT WATCH</p><input id="searchInput" type="search" placeholder="Search movies, series, genres…" autocomplete="off"><div id="searchResults" class="search-results"></div></div></div>
-  <div class="toast" id="toast"></div>
-  <script src="js/config.js"></script><script src="js/app.js"></script>
-</body></html>
+
+    <main>
+
+        <!-- HERO SECTION -->
+        <section class="hero" id="hero">
+
+            <div class="hero-backdrop" id="hero-backdrop"></div>
+
+            <div class="hero-shade"></div>
+
+            <div class="hero-content">
+
+                <div class="eyebrow">
+                    <span class="live-dot"></span>
+                    CINEVA ORIGINAL EXPERIENCE
+                </div>
+
+                <p class="hero-kicker" id="hero-category">
+                    FEATURED MOVIE
+                </p>
+
+                <h1 id="hero-title">
+                    Discover Your
+                    <span>Next Story.</span>
+                </h1>
+
+                <div class="hero-meta">
+
+                    <span id="hero-year">2026</span>
+
+                    <span>•</span>
+
+                    <span id="hero-type">Movie</span>
+
+                    <span>•</span>
+
+                    <span id="hero-quality">HD</span>
+
+                    <span class="rating" id="hero-rating">
+                        <i class="fa-solid fa-star"></i> 8.5
+                    </span>
+
+                </div>
+
+                <p class="hero-description" id="hero-description">
+                    Your next unforgettable movie experience starts here.
+                    Discover incredible movies and series from around the world.
+                </p>
+
+                <div class="hero-buttons">
+
+                    <a href="#" class="btn btn-primary" id="hero-watch">
+                        <i class="fa-solid fa-play"></i>
+                        Watch Now
+                    </a>
+
+                    <a href="#" class="btn btn-secondary" id="hero-details">
+                        <i class="fa-solid fa-circle-info"></i>
+                        More Details
+                    </a>
+
+                    <button class="btn btn-secondary" id="hero-add">
+                        <i class="fa-regular fa-bookmark"></i>
+                        My List
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- HERO CONTROLS -->
+            <div class="hero-bottom">
+
+                <div class="hero-progress">
+                    <span id="hero-progress-bar"></span>
+                </div>
+
+                <div class="hero-controls">
+
+                    <button id="hero-prev" aria-label="Previous featured content">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button id="hero-next" aria-label="Next featured content">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div class="hero-count" id="hero-count">
+                01 <span>/ 05</span>
+            </div>
+
+        </section>
+
+
+        <!-- QUICK DISCOVERY -->
+        <section class="quick-strip">
+
+            <div>
+                <span class="strip-tag">YOUR ENTERTAINMENT DESTINATION</span>
+                <strong>One platform. Endless stories.</strong>
+            </div>
+
+            <span>
+                Discover something worth watching today.
+            </span>
+
+        </section>
+
+
+        <!-- LATEST ADDED -->
+        <section class="content-section" id="latest">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">FRESH FROM CINEVA</p>
+                    <h2>Latest <span>Added</span></h2>
+                    <p class="section-sub">
+                        Recently uploaded movies and series.
+                    </p>
+                </div>
+
+                <a href="discover.html?sort=latest" class="see-all">
+                    View All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-grid" id="latest-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- TRENDING -->
+        <section class="content-section" id="trending">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">POPULAR RIGHT NOW</p>
+                    <h2>Trending <span>Now</span></h2>
+                    <p class="section-sub">
+                        Discover what everyone is watching.
+                    </p>
+                </div>
+
+                <a href="discover.html?sort=trending" class="see-all">
+                    View All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="trending-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTION -->
+        <section class="content-section" id="action">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">ADRENALINE & EXCITEMENT</p>
+                    <h2>Action <span>Movies</span></h2>
+                </div>
+
+                <a href="discover.html?category=Action" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="action-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HORROR -->
+        <section class="content-section" id="horror">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">ENTER IF YOU DARE</p>
+                    <h2>Horror <span>Zone</span></h2>
+                </div>
+
+                <a href="discover.html?category=Horror" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="horror-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- EROTIC / ADULT -->
+        <section class="content-section" id="erotic">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">RESTRICTED COLLECTION</p>
+                    <h2>Erotic <span>Collection</span></h2>
+                    <p class="section-sub">
+                        Restricted to verified adults aged 18 and above.
+                    </p>
+                </div>
+
+                <span class="movie-badge">18+</span>
+
+            </div>
+
+            <div class="movie-row" id="erotic-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- DRAMA -->
+        <section class="content-section" id="drama">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">EMOTIONS & STORIES</p>
+                    <h2>Drama <span>Collection</span></h2>
+                </div>
+
+                <a href="discover.html?category=Drama" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="drama-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- HIGHSCHOOL -->
+        <section class="content-section" id="highschool">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">SCHOOL LIFE & FRIENDSHIP</p>
+                    <h2>Highschool <span>Stories</span></h2>
+                </div>
+
+                <a href="discover.html?category=Highschool" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="highschool-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ANIMATION -->
+        <section class="content-section" id="animation">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">IMAGINATION WITHOUT LIMITS</p>
+                    <h2>Animation <span>World</span></h2>
+                </div>
+
+                <a href="discover.html?category=Animation" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="animation-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMEDY -->
+        <section class="content-section" id="comedy">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">LAUGH OUT LOUD</p>
+                    <h2>Comedy <span>Central</span></h2>
+                </div>
+
+                <a href="discover.html?category=Comedy" class="see-all">
+                    Explore All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="comedy-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- LATEST SERIES -->
+        <section class="content-section" id="latest-series">
+
+            <div class="section-heading">
+
+                <div>
+                    <p class="section-overline">YOUR NEXT EPISODE AWAITS</p>
+                    <h2>Latest <span>Series</span></h2>
+                    <p class="section-sub">
+                        Newly added and recently updated series.
+                    </p>
+                </div>
+
+                <a href="discover.html?type=series" class="see-all">
+                    View All <b>→</b>
+                </a>
+
+            </div>
+
+            <div class="movie-row" id="series-movies">
+
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ABOUT CINEVA -->
+        <section class="content-section about-section" id="about">
+
+            <div class="about-content">
+
+                <div>
+                    <p class="section-overline">WELCOME TO CINEVA</p>
+
+                    <h2>
+                        Discover.<br>
+                        Watch.<br>
+                        <span>Experience.</span>
+                    </h2>
+
+                </div>
+
+                <div>
+                    <p>
+                        CINEVA brings your entertainment world together.
+                        Explore movies, series and unforgettable stories
+                        across different genres, all in one destination.
+                    </p>
+
+                    <a href="discover.html" class="btn btn-primary">
+                        Explore Collection
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer" id="footer">
+
+        <div class="footer-content">
+
+            <!-- BRAND -->
+            <div class="footer-brand">
+
+                <a href="index.html" class="brand">
+                    CINEVA<span>.</span>
+                </a>
+
+                <p>
+                    Discover. Watch. Experience.
+                    Your entertainment destination for movies
+                    and series from around the world.
+                </p>
+
+            </div>
+
+
+            <!-- EXPLORE -->
+            <div>
+
+                <h3>Explore</h3>
+
+                <a href="index.html">Home</a>
+                <a href="discover.html">Discover</a>
+                <a href="discover.html?type=movie">Movies</a>
+                <a href="discover.html?type=series">TV Series</a>
+
+            </div>
+
+
+            <!-- GENRES -->
+            <div>
+
+                <h3>Genres</h3>
+
+                <a href="#action">Action</a>
+                <a href="#horror">Horror</a>
+                <a href="#drama">Drama</a>
+                <a href="#comedy">Comedy</a>
+                <a href="#animation">Animation</a>
+
+            </div>
+
+
+            <!-- INFORMATION -->
+            <div>
+
+                <h3>Information</h3>
+
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+                <a href="privacy.html">Privacy Policy</a>
+                <a href="terms.html">Terms of Service</a>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER BOTTOM -->
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year">2026</span>
+                CINEVA. All rights reserved.
+            </p>
+
+            <p>
+                DISCOVER. WATCH. EXPERIENCE.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <!-- BACK TO TOP -->
+    <button id="back-to-top" class="back-to-top" aria-label="Back to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+
+    <!-- MAIN JAVASCRIPT -->
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+
+</body>
+</html>
