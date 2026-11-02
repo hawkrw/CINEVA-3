@@ -1,1 +1,428 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#08090d"><title>Discover — CINEVA</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script></head><body><header class="topbar"><a class="brand" href="index.html"><span class="brand-mark">C</span><span>CINEVA<span class="brand-dot">.</span></span></a><nav class="main-nav"><a href="index.html">Home</a><a href="index.html#movies">Movies</a><a href="index.html#series">TV Series</a><a class="active" href="discover.html">Discover</a></nav><div class="nav-actions"><a class="see-all" href="index.html">← Home</a></div></header><main class="watch-main"><div class="section-heading"><div><p class="section-overline">EXPLORE THE CINEVA LIBRARY</p><h2 id="discoverTitle">Discover</h2><p class="section-sub">Find your next favorite movie or series.</p></div></div><div class="discover-tools"><input id="filterSearch" placeholder="Search titles…" type="search"><select id="categoryFilter"><option value="">All categories</option><option>Action</option><option>Horror</option><option>Erotic</option><option>Drama</option><option>Highschool</option><option>Animation</option><option>Comedy</option></select><select id="typeFilter"><option value="">Movies & Series</option><option value="movie">Movies</option><option value="series">TV Series</option></select><select id="sortFilter"><option value="latest">Latest added</option><option value="trending">Most viewed</option><option value="az">A–Z</option></select></div><div class="discover-grid" id="discoverGrid"><p class="loading-line">Loading titles…</p></div></main><footer class="footer"><a class="brand" href="index.html"><span class="brand-mark">C</span><span>CINEVA<span class="brand-dot">.</span></span></a><small>© <span id="year"></span> CINEVA. All rights reserved.</small></footer><script src="js/config.js"></script><script src="js/discover.js"></script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Discover | CINEVA</title>
+
+    <meta name="description" content="Discover movies and series on CINEVA.">
+
+    <link rel="stylesheet" href="css/style.css">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="icon" href="assets/icons/favicon.png">
+
+    <style>
+        /* DISCOVER PAGE */
+
+        .discover-page {
+            min-height: 100vh;
+            padding: 125px 5% 70px;
+        }
+
+        .discover-heading {
+            margin-bottom: 35px;
+        }
+
+        .discover-heading h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .discover-heading h1 span {
+            color: #1677ff;
+        }
+
+        .discover-heading p {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .discover-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .discover-search {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #171a22;
+            border: 1px solid #292e39;
+            border-radius: 8px;
+            padding: 12px 16px;
+            min-width: min(100%, 280px);
+        }
+
+        .discover-search i {
+            color: #1677ff;
+        }
+
+        .discover-search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .discover-select {
+            background: #171a22;
+            color: white;
+            border: 1px solid #292e39;
+            border-radius: 8px;
+            padding: 12px 16px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .discover-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .filter-btn {
+            background: #171a22;
+            border: 1px solid #292e39;
+            color: #bbb;
+            padding: 10px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: .3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #1677ff;
+            border-color: #1677ff;
+            color: white;
+        }
+
+        .discover-results {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .discover-results h2 {
+            font-size: 18px;
+        }
+
+        .discover-results span {
+            color: #888;
+            font-size: 13px;
+        }
+
+        .discover-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 25px 16px;
+        }
+
+        .discover-grid .movie-card {
+            min-width: 0;
+        }
+
+        .discover-empty {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 70px 20px;
+            color: #999;
+        }
+
+        .discover-empty i {
+            font-size: 45px;
+            color: #1677ff;
+            margin-bottom: 20px;
+        }
+
+        .load-more-wrapper {
+            text-align: center;
+            margin-top: 45px;
+        }
+
+        #load-more {
+            padding: 13px 35px;
+            background: #1677ff;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: .3s;
+        }
+
+        #load-more:hover {
+            background: #005bd1;
+            transform: translateY(-2px);
+        }
+
+        #load-more:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 1100px) {
+            .discover-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 750px) {
+            .discover-page {
+                padding: 105px 4% 50px;
+            }
+
+            .discover-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 20px 10px;
+            }
+
+            .discover-toolbar {
+                align-items: stretch;
+            }
+
+            .discover-search {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .discover-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .discover-select {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+    <header class="navbar" id="navbar">
+
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                CINEVA<span>.</span>
+            </a>
+
+            <nav id="main-nav">
+
+                <a href="index.html">Home</a>
+
+                <a href="discover.html" class="active">Discover</a>
+
+                <a href="index.html#latest-movies">Movies</a>
+
+                <a href="index.html#series-movies">Series</a>
+
+            </nav>
+
+            <div class="nav-actions">
+
+                <button id="menu-toggle" aria-label="Open menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- DISCOVER -->
+    <main class="discover-page">
+
+        <section class="discover-heading">
+
+            <h1>Explore <span>CINEVA.</span></h1>
+
+            <p>
+                Discover movies, series and your next favorite story.
+            </p>
+
+        </section>
+
+
+        <!-- SEARCH AND SORT -->
+        <section class="discover-toolbar">
+
+            <div class="discover-search">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    type="search"
+                    id="discover-search"
+                    placeholder="Search movies and series..."
+                    autocomplete="off"
+                >
+
+            </div>
+
+            <select id="discover-sort" class="discover-select">
+
+                <option value="newest">Newest First</option>
+
+                <option value="oldest">Oldest First</option>
+
+                <option value="popular">Most Popular</option>
+
+                <option value="title">A - Z</option>
+
+            </select>
+
+            <select id="discover-type" class="discover-select">
+
+                <option value="all">All Content</option>
+
+                <option value="movie">Movies</option>
+
+                <option value="series">TV Series</option>
+
+            </select>
+
+        </section>
+
+
+        <!-- GENRE FILTERS -->
+        <section class="discover-filters" id="discover-filters">
+
+            <button class="filter-btn active" data-category="all">
+                All
+            </button>
+
+            <button class="filter-btn" data-category="Action">
+                Action
+            </button>
+
+            <button class="filter-btn" data-category="Horror">
+                Horror
+            </button>
+
+            <button class="filter-btn" data-category="Erotic">
+                Erotic
+            </button>
+
+            <button class="filter-btn" data-category="Drama">
+                Drama
+            </button>
+
+            <button class="filter-btn" data-category="Highschool">
+                Highschool
+            </button>
+
+            <button class="filter-btn" data-category="Animation">
+                Animation
+            </button>
+
+            <button class="filter-btn" data-category="Comedy">
+                Comedy
+            </button>
+
+            <button class="filter-btn" data-category="Romance">
+                Romance
+            </button>
+
+            <button class="filter-btn" data-category="Crime">
+                Crime
+            </button>
+
+            <button class="filter-btn" data-category="Sci-Fi">
+                Sci-Fi
+            </button>
+
+        </section>
+
+
+        <!-- RESULTS -->
+        <section>
+
+            <div class="discover-results">
+
+                <h2 id="discover-heading">All Content</h2>
+
+                <span id="discover-count">Loading...</span>
+
+            </div>
+
+            <div class="discover-grid" id="discover-grid">
+
+                <div class="discover-empty">
+
+                    <i class="fa-solid fa-spinner fa-spin"></i>
+
+                    <h3>Loading CINEVA...</h3>
+
+                </div>
+
+            </div>
+
+            <div class="load-more-wrapper">
+
+                <button id="load-more">
+                    Load More
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- FOOTER -->
+    <footer class="footer">
+
+        <div class="footer-bottom">
+
+            <p>
+                © <span id="current-year"></span> CINEVA.
+                All rights reserved.
+            </p>
+
+            <p>
+                Powered by CINEVA.
+            </p>
+
+        </div>
+
+    </footer>
+
+
+    <button id="back-to-top" aria-label="Back to top">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/config.js"></script>
+
+    <script src="js/script.js"></script>
+
+    <script src="js/discover.js"></script>
+
+</body>
+</html>
